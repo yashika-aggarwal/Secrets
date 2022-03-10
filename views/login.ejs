@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<div class="container mt-5">
+    <h1>Login</h1>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="card-body">
+    
+                    <form action="/login" method="POST">
+                        <div class="mb-3 row">
+                            <label for="Email" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                              <input type="email"  class="form-control-plaintext" id="Email" value="" name="username">
+                            </div>
+                          </div>
+                          <div class="mb-3 row">
+                            <label for="Password" class="col-sm-2 col-form-label">Password</label>
+                            <div class="col-sm-10">
+                              <input type="password" class="form-control" id="Password" name="password">
+                            </div>
+                          </div>
+                        </div>
+                     <button class="btn btn-dark btn-lg" type="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>    
+   
+
+
+  <%- include('partials/footer') %>

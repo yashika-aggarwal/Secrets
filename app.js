@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const { mainModule } = require('process');
 const encrypt = require('mongoose-encryption');
 const md5 = require('md5');
+const bcrypt = require('bcrypt');
 const app = express();
 
 
@@ -15,6 +16,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 mongoose.connect('mongodb://localhost:27017/Secrets');
 
+const saltRounds = 10;
 const userSchema = new mongoose.Schema({
     email: String,
     password: String
@@ -35,19 +37,22 @@ app.route('/register')
         res.render('register');
     })
     .post(function(req,res){
-        const newUser = new User({
-            email: req.body.username,
-            password: md5(req.body.password)
-        });
-        newUser.save(function(err){
+        bcrypt.hash(req.body.password, saltRounds, function(err, hashedpassword) {
             if(!err){
-                res.render('secrets');
-            }
-            else{
-                console.log(err);
+                const newUser = new User({
+                 email: req.body.username,
+                 password: hashedpassword
+                });
+                newUser.save(function(err){
+                    if(!err){
+                    res.render('secrets');
+                     }
+                     else{
+                    console.log(err);
+                     }
+                });
             }
         });
-        
     })
 ;
 
@@ -59,9 +64,12 @@ app.route('/login')
         User.findOne({email:req.body.username},function(err,foundUser){
             if(!err){
                 if(foundUser){
-                    if(md5(foundUser.password)=== req.body.password){
-                        res.render('secrets');
-                    }
+                    bcrypt.compare(req.body.password, foundUser.password, function(err, result) {
+                        if(result===true){
+                            res.render('secrets');
+                        }
+                    });
+                    
                 }
             }
             else{
